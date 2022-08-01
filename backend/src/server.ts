@@ -1,6 +1,8 @@
 import cors, { CorsOptions } from "cors";
 import * as dotenv from "dotenv";
 import express, { Application } from "express";
+import { closeConnection, connectToDb } from "./config/mongoConnection";
+import { database } from "./data";
 import configRoutes from "./routes";
 
 dotenv.config();
@@ -12,8 +14,6 @@ const corsOptions: CorsOptions = {
 app.use(cors(corsOptions));
 app.use(express.json());
 
-// const configRoutes = require("./routes");
-// const connection = require("./config/mongoConnection");
 configRoutes(app);
 
 const PORT = process.env.PORT ?? 3001;
@@ -21,10 +21,17 @@ const PORT = process.env.PORT ?? 3001;
 app.listen(PORT, () => {
   try {
     console.log(`Server is running on http://localhost:${PORT}`);
-    // (async () => {
-    //   const db = await connection.connectToDb();
-    //   await db.dropDatabase();
-    // })();
+
+    if (process.env.PRODUCTION === "false") {
+      (async () => {
+        const db = await connectToDb();
+        await db?.dropDatabase();
+        const id = await database.workout.create("Hi");
+        console.log(id);
+      })()
+        .catch((e) => console.error(e))
+        .finally(async () => await closeConnection());
+    }
   } catch (e) {
     console.log(`Error running server on port ${PORT}`);
   }
