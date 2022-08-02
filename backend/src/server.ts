@@ -1,7 +1,7 @@
 import cors, { CorsOptions } from "cors";
 import * as dotenv from "dotenv";
 import express, { Application } from "express";
-import { closeConnection, connectToDb } from "./config/mongoConnection";
+import { connectToDb } from "./config/mongoConnection";
 import { database } from "./data";
 import configRoutes from "./routes";
 
@@ -28,11 +28,14 @@ app.listen(PORT, () => {
         await db?.dropDatabase();
         const id = await database.workout.create("Hi");
         console.log(id);
-      })()
-        .catch((e) => console.error(e))
-        .finally(async () => await closeConnection());
+      })().catch((e) => console.error(e));
     }
   } catch (e) {
     console.log(`Error running server on port ${PORT}`);
   }
 });
+
+// process.on("SIGINT", async () => {
+//   console.log("Closing database connection.\n");
+//   await closeConnection();
+// });
