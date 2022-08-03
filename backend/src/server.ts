@@ -36,6 +36,5 @@ app.listen(PORT, () => {
 });
 
 // process.on("SIGINT", async () => {
-//   console.log("Closing database connection.\n");
 //   await closeConnection();
 // });
