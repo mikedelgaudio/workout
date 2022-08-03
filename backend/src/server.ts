@@ -37,4 +37,5 @@ app.listen(PORT, () => {
 
 // process.on("SIGINT", async () => {
 //   await closeConnection();
+// await
 // });
